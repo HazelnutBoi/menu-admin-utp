@@ -4,15 +4,14 @@
   <meta charset="UTF-8">
   <title>Administrador de Menú UTP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script> 
+  <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* Estilos personalizados que Tailwind no cubre directamente o para mantener un color específico */
     :root {
       --utp-purple: #6a0dad;
     }
-    header {
-      background: var(--utp-purple); /* Tailwind podría usar bg-purple-700 o un color personalizado */
+    .header-bg {
+      background: var(--utp-purple);
     }
     .eliminar-fila { 
       background: #ffc107; 
@@ -28,10 +27,10 @@
       background: #e0a800; 
       transform: none; 
     }
-    .hidden { display: none; } /* Clase para JS, no modificada por Tailwind */
+    .hidden { display: none; }
   </style>
 </head>
-<body class="font-roboto p-5 bg-gray-100 text-gray-800">
+<body class="font-roboto bg-gray-100 text-gray-800">
   <script>
     async function authenticate() {
       const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
@@ -52,34 +51,44 @@
         alert("Contraseña incorrecta. Acceso denegado.");
         window.location.href = "https://menu-utp.vercel.app/";
       } else {
-        // Muestra el contenido si la contraseña es correcta
-        document.getElementById('tablaMenu').classList.remove('hidden');
-        document.querySelector('.acciones').classList.remove('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        loadMenu();
+      }
+    }
+
+    function formatCurrency(input) {
+      const value = input.value;
+      if (value) {
+        input.parentElement.querySelector('.currency-display').textContent = 'B/. ';
+      } else {
+        input.parentElement.querySelector('.currency-display').textContent = '';
       }
     }
     
     authenticate();
   </script>
 
-  <header class="text-white p-4 text-center flex items-center justify-center shadow-md mb-8">
+  <header class="header-bg text-white py-4 text-center flex items-center justify-center shadow-md mb-8">
     <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
     <h2 class="text-2xl font-bold">Administrador de Menú UTP</h2>
   </header>
-  
-  <table id="tablaMenu" class="hidden w-full border-collapse my-5 mx-auto shadow-lg bg-white rounded-lg overflow-hidden">
-    <thead>
-      <tr>
-        <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
-        <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
-        <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div class="acciones hidden text-center mt-8">
-    <button class="agregar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-cyan-600 text-white hover:bg-cyan-700 transform hover:-translate-y-0.5" onclick="agregarFila()">➕ Agregar Plato</button>
-    <button class="guardar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-purple-700 text-white hover:bg-purple-800 transform hover:-translate-y-0.5" onclick="guardar()">💾 Guardar Menú</button>
-    <button class="borrar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-red-600 text-white hover:bg-red-700 transform hover:-translate-y-0.5" onclick="borrarMenu()">🗑 Borrar Menú</button>
+
+  <div id="mainContent" class="hidden px-5 max-w-4xl mx-auto">
+    <table id="tablaMenu" class="w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden">
+      <thead>
+        <tr>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="acciones text-center mt-8">
+      <button class="agregar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-cyan-600 text-white hover:bg-cyan-700 transform hover:-translate-y-0.5" onclick="agregarFila()">➕ Agregar Plato</button>
+      <button class="guardar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-purple-700 text-white hover:bg-purple-800 transform hover:-translate-y-0.5" onclick="guardar()">💾 Guardar Menú</button>
+      <button class="borrar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-red-600 text-white hover:bg-red-700 transform hover:-translate-y-0.5" onclick="borrarMenu()">🗑 Borrar Menú</button>
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -105,10 +114,16 @@
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="p-4 border border-gray-200"><input type="text" value="${descripcion}" placeholder="Descripción" class="w-full p-2 border border-gray-300 rounded-md text-base"></td>
-        <td class="p-4 border border-gray-200"><input type="number" step="0.01" value="${precio}" placeholder="Precio" class="w-full p-2 border border-gray-300 rounded-md text-base"></td>
+        <td class="p-4 border border-gray-200 relative"><span class="currency-display absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">B/.</span><input type="number" step="0.01" value="${precio}" placeholder="Precio" class="w-full p-2 pl-8 border border-gray-300 rounded-md text-base" oninput="formatCurrency(this)"></td>
         <td class="p-4 border border-gray-200 text-center"><button class="eliminar-fila" onclick="this.parentElement.parentElement.remove()">❌</button></td>
       `;
       tbody.appendChild(row);
+
+      // Si se agrega con un valor inicial, aplicar formato
+      const input = row.querySelector('input[type="number"]');
+      if (input) {
+          formatCurrency(input);
+      }
     }
 
     async function guardar() {
@@ -133,11 +148,13 @@
       alert("🗑 Menú eliminado");
     }
 
-    db.ref("menuHoy").get().then(snapshot => {
-      if (snapshot.exists() && snapshot.val().items) {
-        snapshot.val().items.forEach(item => agregarFila(item.descripcion, item.precio));
-      }
-    });
+    function loadMenu() {
+      db.ref("menuHoy").get().then(snapshot => {
+        if (snapshot.exists() && snapshot.val().items) {
+          snapshot.val().items.forEach(item => agregarFila(item.descripcion, item.precio));
+        }
+      });
+    }
   </script>
 </body>
 </html>
