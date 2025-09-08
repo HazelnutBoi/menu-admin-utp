@@ -18,6 +18,7 @@ module.exports = async (req, res) => {
       const { fecha, items } = req.body;
       const data = {
         fecha: fecha,
+        // Almacenamos todos los campos que vienen del front-end
         items: items
       };
 
