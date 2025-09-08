@@ -1,37 +1,50 @@
-// api/menu.js
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-// Inicializa la app de Firebase solo si aún no está inicializada
 if (!admin.apps.length) {
-  try {
-    admin.initializeApp({
-      credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)),
-      databaseURL: process.env.FIREBASE_DATABASE_URL
-    });
-  } catch (error) {
-    console.log("Error initializing admin:", error);
-  }
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
 }
 
-const db = admin.database();
+const db = admin.firestore();
 
 module.exports = async (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+
   if (req.method === 'POST') {
-    const menuData = req.body;
+    // Lógica para guardar el menú
     try {
-      await db.ref('menuHoy').set(menuData);
-      res.status(200).json({ success: true, message: 'Menú guardado con éxito.' });
+      const { fecha, items } = req.body;
+      const data = {
+        fecha: fecha,
+        items: items
+      };
+
+      await db.collection("menus").doc("menuHoy").set(data);
+      
+      console.log("Menú guardado exitosamente en Firestore.");
+      return res.status(200).send({ success: true, message: "Menú guardado." });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Error al guardar el menú.', error: error.message });
+      console.error("Error al guardar el menú:", error);
+      return res.status(500).send({ success: false, message: "Error al guardar el menú." });
     }
-  } else if (req.method === 'DELETE') {
+  } 
+  
+  else if (req.method === 'DELETE') {
+    // Lógica para borrar el menú
     try {
-      await db.ref('menuHoy').remove();
-      res.status(200).json({ success: true, message: 'Menú borrado con éxito.' });
+      await db.collection("menus").doc("menuHoy").delete();
+      
+      console.log("Menú borrado exitosamente de Firestore.");
+      return res.status(200).send({ success: true, message: "Menú borrado." });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Error al borrar el menú.', error: error.message });
+      console.error("Error al borrar el menú:", error);
+      return res.status(500).send({ success: false, message: "Error al borrar el menú." });
     }
-  } else {
-    res.status(405).json({ success: false, message: 'Método no permitido.' });
+  } 
+  
+  else {
+    return res.status(405).send({ success: false, message: "Método no permitido." });
   }
 };
