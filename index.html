@@ -55,11 +55,12 @@
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
     let db;
     let menuRef;
+    let listener;
 
     async function initializeFirebase() {
         try {
@@ -67,8 +68,8 @@
             const firebaseConfig = await response.json();
             
             const app = firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-            menuRef = db.ref("menuHoy");
+            db = firebase.firestore();
+            menuRef = db.collection("menus").doc("menuHoy");
 
             authenticate();
         } catch (error) {
@@ -189,19 +190,21 @@
         alert(`Error: ${data.message}`);
       }
     }
-
+    
+    // Nueva función para cargar el menú desde Firestore
     function loadMenu() {
-      menuRef.on("value", (snapshot) => {
-        if (snapshot.exists() && snapshot.val().items) {
+      listener = menuRef.onSnapshot(docSnapshot => {
+        if (docSnapshot.exists && docSnapshot.data().items) {
           tbody.innerHTML = "";
-          snapshot.val().items.forEach(item => agregarFila(item.descripcion, item.precio));
+          docSnapshot.data().items.forEach(item => agregarFila(item.descripcion, item.precio));
         }
       });
     }
 
+    // Nueva función para desconectar el listener
     function detachListener() {
-        if (menuRef) {
-            menuRef.off("value");
+        if (listener) {
+            listener(); // onSnapshot devuelve una función para desconectar
         }
     }
 
