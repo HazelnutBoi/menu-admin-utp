@@ -32,13 +32,12 @@
 </head>
 <body class="font-roboto bg-gray-100 text-gray-800">
   <script>
-    let db; // Variable global para la base de datos
+    let db;
 
-    // Función para inicializar Firebase de forma segura
     async function initializeFirebase() {
         try {
-            // MUY IMPORTANTE: Reemplaza esta URL con la URL de tu proyecto del menú público
-            const response = await fetch('https://[URL_DE_TU_PROYECTO_PUBLICO]/api/firebase-config');
+            // Se corrigió la URL para que apunte al menú público
+            const response = await fetch('https://menu-utp.vercel.app/api/firebase-config');
             const firebaseConfig = await response.json();
             
             const app = firebase.initializeApp(firebaseConfig);
