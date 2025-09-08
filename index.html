@@ -62,7 +62,13 @@
 
     async function initializeFirebase() {
         try {
-            const response = await fetch('/api/firebase-config');
+            // 1. Obtiene la clave secreta de la API local del administrador
+            const secretResponse = await fetch('/api/get-secret');
+            const secretData = await secretResponse.json();
+            const secret = secretData.secret;
+
+            // 2. Usa la clave para llamar a la API del menú público
+            const response = await fetch(`https://menu-utp.vercel.app/api/firebase-config?secret=${secret}`);
             const firebaseConfig = await response.json();
             
             const app = firebase.initializeApp(firebaseConfig);
