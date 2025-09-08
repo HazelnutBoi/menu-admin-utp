@@ -30,7 +30,7 @@
     .hidden { display: none; }
   </style>
 </head>
-<body class="font-roboto bg-gray-100 text-gray-800">
+<body class="font-roboto bg-gray-100 text-gray-800" onunload="detachListener()">
   <header class="header-bg text-white py-4 text-center flex items-center justify-center shadow-md mb-8">
     <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
     <h2 class="text-2xl font-bold">Administrador de Menú UTP</h2>
@@ -59,6 +59,7 @@
 
   <script>
     let db;
+    let menuRef;
 
     async function initializeFirebase() {
         try {
@@ -67,7 +68,8 @@
             
             const app = firebase.initializeApp(firebaseConfig);
             db = firebase.database();
-            
+            menuRef = db.ref("menuHoy");
+
             authenticate();
         } catch (error) {
             console.error("Error al obtener la configuración de Firebase:", error);
@@ -189,11 +191,18 @@
     }
 
     function loadMenu() {
-      db.ref("menuHoy").get().then(snapshot => {
+      menuRef.on("value", (snapshot) => {
         if (snapshot.exists() && snapshot.val().items) {
+          tbody.innerHTML = "";
           snapshot.val().items.forEach(item => agregarFila(item.descripcion, item.precio));
         }
       });
+    }
+
+    function detachListener() {
+        if (menuRef) {
+            menuRef.off("value");
+        }
     }
 
     const tbody = document.querySelector("#tablaMenu tbody");
