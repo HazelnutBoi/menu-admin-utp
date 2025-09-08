@@ -66,7 +66,7 @@
     async function authenticate() {
       const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
       if (!password) {
-        window.location.href = "https://utp-menu.netlify.app/";
+        window.location.href = "https://menu-utp.vercel.app/";
         return;
       }
       
@@ -80,7 +80,7 @@
       
       if (!data.success) {
         alert("Contraseña incorrecta. Acceso denegado.");
-        window.location.href = "https://utp-menu.netlify.app/";
+        window.location.href = "https://menu-utp.vercel.app/";
       } else {
         // Muestra el contenido si la contraseña es correcta
         document.getElementById('tablaMenu').classList.remove('hidden');
@@ -167,4 +167,5 @@
   </script>
 </body>
 </html>
+
 
