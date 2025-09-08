@@ -32,6 +32,25 @@
 </head>
 <body class="font-roboto bg-gray-100 text-gray-800">
   <script>
+    let db; // Variable para la base de datos
+
+    // Función para inicializar Firebase de forma segura
+    async function initializeFirebase() {
+        try {
+            const response = await fetch('https://[URL_DE_TU_PROYECTO_PUBLICO]/api/firebase-config');
+            const firebaseConfig = await response.json();
+            
+            const app = firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            
+            // Llamar a la función de autenticación después de la inicialización
+            authenticate();
+        } catch (error) {
+            console.error("Error al obtener la configuración de Firebase:", error);
+            alert("Error al inicializar el administrador.");
+        }
+    }
+
     async function authenticate() {
       let attempts = 0;
       const maxAttempts = 5;
@@ -69,7 +88,6 @@
       window.location.href = "https://menu-utp.vercel.app/";
     }
     
-    // Función para capitalizar solo la primera letra de la cadena
     function capitalizeDescription(input) {
       let value = input.value.trim();
       if (!value) return;
@@ -79,53 +97,7 @@
 
       input.value = value;
     }
-
-    authenticate();
-  </script>
-
-  <header class="header-bg text-white py-4 text-center flex items-center justify-center shadow-md mb-8">
-    <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
-    <h2 class="text-2xl font-bold">Administrador de Menú UTP</h2>
-  </header>
-
-  <div id="mainContent" class="hidden px-5 max-w-4xl mx-auto">
-    <table id="tablaMenu" class="w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden">
-      <thead>
-        <tr>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div class="acciones text-center mt-8">
-      <button class="agregar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-cyan-600 text-white hover:bg-cyan-700 transform hover:-translate-y-0.5" onclick="agregarFila()">➕ Agregar Plato</button>
-      <button class="guardar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-purple-700 text-white hover:bg-purple-800 transform hover:-translate-y-0.5" onclick="guardar()">💾 Guardar Menú</button>
-      <button class="borrar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-red-600 text-white hover:bg-red-700 transform hover:-translate-y-0.5" onclick="borrarMenu()">🗑 Borrar Menú</button>
-    </div>
-  </div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-  <script>
-    // Usar variables de entorno para la configuración de Firebase
-    const firebaseConfig = {
-      apiKey: "%FIREBASE_API_KEY%",
-      authDomain: "%FIREBASE_AUTH_DOMAIN%",
-      databaseURL: "%FIREBASE_DATABASE_URL%",
-      projectId: "%FIREBASE_PROJECT_ID%",
-      storageBucket: "%FIREBASE_STORAGE_BUCKET%",
-      messagingSenderId: "%FIREBASE_MESSAGING_SENDER_ID%",
-      appId: "%FIREBASE_APP_ID%",
-      measurementId: "%FIREBASE_MEASUREMENT_ID%"
-    };
     
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const tbody = document.querySelector("#tablaMenu tbody");
-
     function agregarFila(descripcion = "", precio = "") {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -177,6 +149,33 @@
         }
       });
     }
+
+    const tbody = document.querySelector("#tablaMenu tbody");
+    
+    initializeFirebase();
   </script>
+
+  <header class="header-bg text-white py-4 text-center flex items-center justify-center shadow-md mb-8">
+    <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
+    <h2 class="text-2xl font-bold">Administrador de Menú UTP</h2>
+  </header>
+
+  <div id="mainContent" class="hidden px-5 max-w-4xl mx-auto">
+    <table id="tablaMenu" class="w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden">
+      <thead>
+        <tr>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="acciones text-center mt-8">
+      <button class="agregar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-cyan-600 text-white hover:bg-cyan-700 transform hover:-translate-y-0.5" onclick="agregarFila()">➕ Agregar Plato</button>
+      <button class="guardar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-purple-700 text-white hover:bg-purple-800 transform hover:-translate-y-0.5" onclick="guardar()">💾 Guardar Menú</button>
+      <button class="borrar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-red-600 text-white hover:bg-red-700 transform hover:-translate-y-0.5" onclick="borrarMenu()">🗑 Borrar Menú</button>
+    </div>
+  </div>
 </body>
 </html>
