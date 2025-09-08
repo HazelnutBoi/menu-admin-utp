@@ -4,64 +4,34 @@
   <meta charset="UTF-8">
   <title>Administrador de Menú UTP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script> 
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    /* Estilos personalizados que Tailwind no cubre directamente o para mantener un color específico */
     :root {
       --utp-purple: #6a0dad;
     }
-    body { font-family: 'Roboto', sans-serif; padding: 20px; background: #f0f2f5; color: #333; }
     header {
-      background: var(--utp-purple);
-      color: white;
-      padding: 15px;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
+      background: var(--utp-purple); /* Tailwind podría usar bg-purple-700 o un color personalizado */
     }
-    header img {
-      height: 50px;
-      margin-right: 15px;
+    .eliminar-fila { 
+      background: #ffc107; 
+      color: black; 
+      border-radius: 50%; 
+      padding: 5px 10px; 
+      font-weight: bold; 
+      font-size: 0.9em; 
+      box-shadow: none; 
+      border: none;
     }
-    header h2 { 
-      margin: 0; 
-      color: white; 
-      font-size: 1.8em; 
-      font-weight: 700;
+    .eliminar-fila:hover { 
+      background: #e0a800; 
+      transform: none; 
     }
-    table { width: 100%; border-collapse: collapse; margin: 20px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; border-radius: 8px; overflow: hidden; }
-    th, td { padding: 15px; border: 1px solid #e0e0e0; text-align: left; }
-    th { background: var(--utp-purple); color: white; text-transform: uppercase; font-weight: 700; font-size: 1.1em; }
-    td input { width: 95%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
-    .acciones { text-align: center; margin-top: 30px; }
-    button { 
-      padding: 12px 25px; 
-      margin: 10px; 
-      border: none; 
-      border-radius: 6px; 
-      cursor: pointer; 
-      font-size: 1.05rem;
-      font-weight: 700;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    button:hover {
-      transform: translateY(-2px);
-    }
-    .agregar { background: #17a2b8; color: white; }
-    .agregar:hover { background: #138496; }
-    .guardar { background: var(--utp-purple); color: white; }
-    .guardar:hover { background: #5a0a9c; }
-    .borrar { background: #dc3545; color: white; }
-    .borrar:hover { background: #c82333; }
-    .eliminar-fila { background: #ffc107; color: black; border-radius: 50%; padding: 5px 10px; font-weight: bold; font-size: 0.9em; box-shadow: none; }
-    .eliminar-fila:hover { background: #e0a800; transform: none; }
-    .hidden { display: none; }
+    .hidden { display: none; } /* Clase para JS, no modificada por Tailwind */
   </style>
 </head>
-<body>
+<body class="font-roboto p-5 bg-gray-100 text-gray-800">
   <script>
     async function authenticate() {
       const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
@@ -91,21 +61,25 @@
     authenticate();
   </script>
 
-  <header>
-    <img src="logo_utp.png" alt="Logo UTP">
-    <h2>Administrador de Menú UTP</h2>
+  <header class="text-white p-4 text-center flex items-center justify-center shadow-md mb-8">
+    <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
+    <h2 class="text-2xl font-bold">Administrador de Menú UTP</h2>
   </header>
   
-  <table id="tablaMenu" class="hidden">
+  <table id="tablaMenu" class="hidden w-full border-collapse my-5 mx-auto shadow-lg bg-white rounded-lg overflow-hidden">
     <thead>
-      <tr><th>Descripción</th><th>Precio</th><th>Acción</th></tr>
+      <tr>
+        <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
+        <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
+        <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
-  <div class="acciones hidden">
-    <button class="agregar" onclick="agregarFila()">➕ Agregar Plato</button>
-    <button class="guardar" onclick="guardar()">💾 Guardar Menú</button>
-    <button class="borrar" onclick="borrarMenu()">🗑 Borrar Menú</button>
+  <div class="acciones hidden text-center mt-8">
+    <button class="agregar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-cyan-600 text-white hover:bg-cyan-700 transform hover:-translate-y-0.5" onclick="agregarFila()">➕ Agregar Plato</button>
+    <button class="guardar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-purple-700 text-white hover:bg-purple-800 transform hover:-translate-y-0.5" onclick="guardar()">💾 Guardar Menú</button>
+    <button class="borrar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-red-600 text-white hover:bg-red-700 transform hover:-translate-y-0.5" onclick="borrarMenu()">🗑 Borrar Menú</button>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -130,9 +104,9 @@
     function agregarFila(descripcion = "", precio = "") {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td><input type="text" value="${descripcion}" placeholder="Descripción"></td>
-        <td><input type="number" step="0.01" value="${precio}" placeholder="Precio"></td>
-        <td><button class="eliminar-fila" onclick="this.parentElement.parentElement.remove()">❌</button></td>
+        <td class="p-4 border border-gray-200"><input type="text" value="${descripcion}" placeholder="Descripción" class="w-full p-2 border border-gray-300 rounded-md text-base"></td>
+        <td class="p-4 border border-gray-200"><input type="number" step="0.01" value="${precio}" placeholder="Precio" class="w-full p-2 border border-gray-300 rounded-md text-base"></td>
+        <td class="p-4 border border-gray-200 text-center"><button class="eliminar-fila" onclick="this.parentElement.parentElement.remove()">❌</button></td>
       `;
       tbody.appendChild(row);
     }
