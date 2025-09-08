@@ -69,17 +69,13 @@
       window.location.href = "https://menu-utp.vercel.app/";
     }
     
-    // Función para capitalizar la primera letra de cada palabra
+    // Función para capitalizar solo la primera letra de la cadena
     function capitalizeDescription(input) {
       let value = input.value.trim();
       if (!value) return;
 
-      value = value.toLowerCase().split(' ').map(word => {
-        if (word.length > 0) {
-          return word.charAt(0).toUpperCase() + word.slice(1);
-        }
-        return '';
-      }).join(' ');
+      value = value.toLowerCase();
+      value = value.charAt(0).toUpperCase() + value.slice(1);
 
       input.value = value;
     }
