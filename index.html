@@ -81,6 +81,10 @@
       if (!data.success) {
         alert("Contraseña incorrecta. Acceso denegado.");
         window.location.href = "https://utp-menu.netlify.app/";
+      } else {
+        // Muestra el contenido si la contraseña es correcta
+        document.getElementById('tablaMenu').classList.remove('hidden');
+        document.querySelector('.acciones').classList.remove('hidden');
       }
     }
     
@@ -92,13 +96,13 @@
     <h2>Administrador de Menú UTP</h2>
   </header>
   
-  <table id="tablaMenu">
+  <table id="tablaMenu" class="hidden">
     <thead>
       <tr><th>Descripción</th><th>Precio</th><th>Acción</th></tr>
     </thead>
     <tbody></tbody>
   </table>
-  <div class="acciones">
+  <div class="acciones hidden">
     <button class="agregar" onclick="agregarFila()">➕ Agregar Plato</button>
     <button class="guardar" onclick="guardar()">💾 Guardar Menú</button>
     <button class="borrar" onclick="borrarMenu()">🗑 Borrar Menú</button>
@@ -163,3 +167,4 @@
   </script>
 </body>
 </html>
+
