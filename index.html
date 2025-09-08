@@ -42,6 +42,7 @@
         <tr>
           <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
           <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
+          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Tiempo / Precarga</th>
           <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
         </tr>
       </thead>
@@ -130,12 +131,19 @@
         e.preventDefault();
       }
     }
-
-    function agregarFila(descripcion = "", precio = "") {
+    
+    // Agregamos un tercer argumento para el tiempo y la opción de precarga
+    function agregarFila(descripcion = "", precio = "", tiempo = "", esProximo = false) {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td class="p-4 border border-gray-200"><input type="text" value="${descripcion}" placeholder="Descripción" class="w-full p-2 border border-gray-300 rounded-md text-base" onchange="capitalizeDescription(this)"></td>
         <td class="p-4 border border-gray-200"><input type="number" step="0.01" value="${precio}" placeholder="Precio" class="w-full p-2 border border-gray-300 rounded-md text-base" onKeyDown="blockInvalidChar(event)"></td>
+        <td class="p-4 border border-gray-200 text-center flex flex-col items-center">
+            <input type="number" value="${tiempo}" placeholder="Minutos" class="w-24 p-2 border border-gray-300 rounded-md text-base text-center">
+            <div class="mt-2 text-sm font-bold">
+                <input type="checkbox" ${esProximo ? 'checked' : ''} class="proximo-checkbox"> Próximo
+            </div>
+        </td>
         <td class="p-4 border border-gray-200 text-center"><button class="eliminar-fila" onclick="this.parentElement.parentElement.remove()">❌</button></td>
       `;
       tbody.appendChild(row);
@@ -155,11 +163,22 @@
         const descripcion = r.cells[0].querySelector("input").value;
         let precio = r.cells[1].querySelector("input").value;
         
+        // Obtiene los nuevos campos de tiempo y estado
+        const tiempo = r.cells[2].querySelector("input[type='number']").value;
+        const esProximo = r.cells[2].querySelector("input[type='checkbox']").checked;
+
         if (precio) {
           precio = parseFloat(precio).toFixed(2);
         }
 
-        if (descripcion && precio) items.push({ descripcion, precio });
+        if (descripcion && precio) {
+            items.push({ 
+                descripcion, 
+                precio,
+                tiempo: parseInt(tiempo) || 0, 
+                esProximo 
+            });
+        }
       });
 
       const hoy = new Date();
@@ -190,21 +209,22 @@
         alert(`Error: ${data.message}`);
       }
     }
-    
-    // Nueva función para cargar el menú desde Firestore
+
     function loadMenu() {
       listener = menuRef.onSnapshot(docSnapshot => {
         if (docSnapshot.exists && docSnapshot.data().items) {
           tbody.innerHTML = "";
-          docSnapshot.data().items.forEach(item => agregarFila(item.descripcion, item.precio));
+          docSnapshot.data().items.forEach(item => {
+            // Pasamos los nuevos campos a la función
+            agregarFila(item.descripcion, item.precio, item.tiempo, item.esProximo);
+          });
         }
       });
     }
 
-    // Nueva función para desconectar el listener
     function detachListener() {
         if (listener) {
-            listener(); // onSnapshot devuelve una función para desconectar
+            listener();
         }
     }
 
