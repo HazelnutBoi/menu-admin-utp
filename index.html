@@ -155,15 +155,31 @@
 
       const hoy = new Date();
       const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+      
+      const response = await fetch("./api/menu", {
+        method: "POST",
+        body: JSON.stringify({ fecha, items }),
+        headers: { "Content-Type": "application/json" }
+      });
 
-      await db.ref("menuHoy").set({ fecha, items });
-      alert("✅ Menú guardado");
+      const data = await response.json();
+      if (data.success) {
+        alert("✅ Menú guardado");
+      } else {
+        alert(`Error: ${data.message}`);
+      }
     }
 
     async function borrarMenu() {
-      await db.ref("menuHoy").remove();
-      tbody.innerHTML = "";
-      alert("🗑 Menú eliminado");
+      const response = await fetch("./api/menu", { method: "DELETE" });
+
+      const data = await response.json();
+      if (data.success) {
+        tbody.innerHTML = "";
+        alert("🗑 Menú eliminado");
+      } else {
+        alert(`Error: ${data.message}`);
+      }
     }
 
     function loadMenu() {
