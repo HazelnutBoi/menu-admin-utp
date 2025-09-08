@@ -36,7 +36,8 @@
 
     async function initializeFirebase() {
         try {
-            const response = await fetch('https://menu-utp.vercel.app/api/firebase-config');
+            // Se corrigió para que llame a su propia API local
+            const response = await fetch('/api/firebase-config');
             const firebaseConfig = await response.json();
             
             const app = firebase.initializeApp(firebaseConfig);
