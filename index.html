@@ -111,11 +111,8 @@
       tbody.appendChild(row);
 
       const input = row.querySelector('input[type="number"]');
-      if (input) {
-          // Si el input tiene valor, lo formatea a 2 decimales
-          if (input.value) {
-            input.value = parseFloat(input.value).toFixed(2);
-          }
+      if (input && input.value) {
+          input.value = parseFloat(input.value).toFixed(2);
       }
     }
 
@@ -124,7 +121,14 @@
       const items = [];
       rows.forEach(r => {
         const descripcion = r.cells[0].querySelector("input").value;
-        const precio = r.cells[1].querySelector("input").value;
+        let precio = r.cells[1].querySelector("input").value;
+        
+        // **BUG SOLUCIONADO AQUÍ**
+        // Formatear el precio a 2 decimales justo antes de guardar
+        if (precio) {
+          precio = parseFloat(precio).toFixed(2);
+        }
+
         if (descripcion && precio) items.push({ descripcion, precio });
       });
 
