@@ -1,5 +1,4 @@
 // api/firebase-config.js
-    
 module.exports = (req, res) => {
   const config = {
     apiKey: process.env.FIREBASE_API_KEY,
