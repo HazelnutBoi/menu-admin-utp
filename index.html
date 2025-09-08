@@ -33,26 +33,33 @@
 <body class="font-roboto bg-gray-100 text-gray-800">
   <script>
     async function authenticate() {
-      const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
-      if (!password) {
-        window.location.href = "https://menu-utp.vercel.app/";
-        return;
-      }
-      
-      const response = await fetch("./api/auth", {
-        method: "POST",
-        body: JSON.stringify({ password: password }),
-        headers: { "Content-Type": "application/json" }
-      });
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        alert("Contraseña incorrecta. Acceso denegado.");
-        window.location.href = "https://menu-utp.vercel.app/";
-      } else {
-        document.getElementById('mainContent').classList.remove('hidden');
-        loadMenu();
+      // Bucle para permitir reintentos
+      while (true) {
+        const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
+        
+        // Si el usuario cancela, lo redirigimos
+        if (password === null) {
+          window.location.href = "https://menu-utp.vercel.app/";
+          return;
+        }
+
+        const response = await fetch("./api/auth", {
+          method: "POST",
+          body: JSON.stringify({ password: password }),
+          headers: { "Content-Type": "application/json" }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Si la contraseña es correcta, mostramos el contenido y salimos del bucle
+          document.getElementById('mainContent').classList.remove('hidden');
+          loadMenu();
+          return;
+        } else {
+          // Si es incorrecta, mostramos una alerta y el bucle vuelve a pedir la contraseña
+          alert("Contraseña incorrecta. Por favor, intente de nuevo.");
+        }
       }
     }
     
@@ -112,7 +119,9 @@
 
       const input = row.querySelector('input[type="number"]');
       if (input && input.value) {
-          input.value = parseFloat(input.value).toFixed(2);
+          if (input.value) {
+            input.value = parseFloat(input.value).toFixed(2);
+          }
       }
     }
 
@@ -123,8 +132,6 @@
         const descripcion = r.cells[0].querySelector("input").value;
         let precio = r.cells[1].querySelector("input").value;
         
-        // **BUG SOLUCIONADO AQUÍ**
-        // Formatear el precio a 2 decimales justo antes de guardar
         if (precio) {
           precio = parseFloat(precio).toFixed(2);
         }
