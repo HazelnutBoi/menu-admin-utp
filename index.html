@@ -33,11 +33,12 @@
 <body class="font-roboto bg-gray-100 text-gray-800">
   <script>
     async function authenticate() {
-      // Bucle para permitir reintentos
-      while (true) {
+      let attempts = 0;
+      const maxAttempts = 5;
+
+      while (attempts < maxAttempts) {
         const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
         
-        // Si el usuario cancela, lo redirigimos
         if (password === null) {
           window.location.href = "https://menu-utp.vercel.app/";
           return;
@@ -52,15 +53,21 @@
         const data = await response.json();
         
         if (data.success) {
-          // Si la contraseña es correcta, mostramos el contenido y salimos del bucle
           document.getElementById('mainContent').classList.remove('hidden');
           loadMenu();
           return;
         } else {
-          // Si es incorrecta, mostramos una alerta y el bucle vuelve a pedir la contraseña
-          alert("Contraseña incorrecta. Por favor, intente de nuevo.");
+          attempts++;
+          if (attempts < maxAttempts) {
+            alert(`Contraseña incorrecta. Intento ${attempts} de ${maxAttempts}.`);
+          } else {
+            alert("Ha excedido el número máximo de intentos. Acceso denegado.");
+          }
         }
       }
+
+      // Redirigir si se excede el número de intentos
+      window.location.href = "https://menu-utp.vercel.app/";
     }
     
     authenticate();
