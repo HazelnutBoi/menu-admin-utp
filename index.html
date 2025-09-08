@@ -28,6 +28,15 @@
       transform: none; 
     }
     .hidden { display: none; }
+    /* Ajuste específico para que el B/. no se salga */
+    .price-input-container .currency-symbol {
+      left: 10px; /* Ajusta la posición del símbolo */
+      font-size: 0.9em; /* Reduce un poco el tamaño si lo deseas */
+      color: #6b7280; /* Un gris un poco más oscuro para que contraste */
+    }
+    .price-input-container input {
+      padding-left: 2.5rem; /* Aumenta el padding para hacer espacio al símbolo (40px) */
+    }
   </style>
 </head>
 <body class="font-roboto bg-gray-100 text-gray-800">
@@ -57,12 +66,12 @@
     }
 
     function formatPrice(input) {
-      let value = input.value;
-      if (value) {
-        // Asegura que el valor sea un número con dos decimales
-        value = parseFloat(value).toFixed(2);
+      let value = parseFloat(input.value);
+      if (isNaN(value)) {
+          input.value = ""; // Si no es un número válido, déjalo vacío
+          return;
       }
-      input.value = value;
+      input.value = value.toFixed(2); // Asegura dos decimales
     }
     
     authenticate();
@@ -112,14 +121,17 @@
 
     function agregarFila(descripcion = "", precio = "") {
       const row = document.createElement("tr");
+      // Añadimos una clase al td del precio para aplicar los estilos CSS
       row.innerHTML = `
         <td class="p-4 border border-gray-200"><input type="text" value="${descripcion}" placeholder="Descripción" class="w-full p-2 border border-gray-300 rounded-md text-base"></td>
-        <td class="p-4 border border-gray-200 relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">B/.</span><input type="number" step="0.01" value="${precio}" placeholder="Precio" class="w-full p-2 pl-8 border border-gray-300 rounded-md text-base" onchange="formatPrice(this)"></td>
+        <td class="p-4 border border-gray-200 relative price-input-container">
+          <span class="currency-symbol absolute top-1/2 -translate-y-1/2 text-gray-500">B/.</span>
+          <input type="number" step="0.01" value="${precio}" placeholder="Precio" class="w-full p-2 border border-gray-300 rounded-md text-base" onchange="formatPrice(this)">
+        </td>
         <td class="p-4 border border-gray-200 text-center"><button class="eliminar-fila" onclick="this.parentElement.parentElement.remove()">❌</button></td>
       `;
       tbody.appendChild(row);
 
-      // Si se agrega con un valor inicial, aplicar formato
       const input = row.querySelector('input[type="number"]');
       if (input) {
           formatPrice(input);
@@ -158,5 +170,3 @@
   </script>
 </body>
 </html>
-
-
