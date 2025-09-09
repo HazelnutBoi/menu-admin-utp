@@ -16,10 +16,24 @@ module.exports = async (req, res) => {
     // Lógica para guardar el menú
     try {
       const { fecha, items } = req.body;
+      
+      const newItems = items.map(item => {
+        if (item.esProximo && item.tiempo > 0) {
+            // Calcula la fecha de finalización en milisegundos
+            item.readyAt = Date.now() + (item.tiempo * 60 * 1000);
+            // Elimina el campo "tiempo" para no almacenarlo
+            delete item.tiempo;
+        } else {
+            // Si no es próximo o no tiene tiempo, elimina los campos
+            delete item.esProximo;
+            delete item.tiempo;
+        }
+        return item;
+      });
+
       const data = {
         fecha: fecha,
-        // Almacenamos todos los campos que vienen del front-end
-        items: items
+        items: newItems
       };
 
       await db.collection("menus").doc("menuHoy").set(data);
