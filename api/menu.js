@@ -13,18 +13,15 @@ module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'POST') {
-    // Lógica para guardar el menú
+    // Esta parte no necesita la clave secreta ya que es llamada desde el administrador.
     try {
       const { fecha, items } = req.body;
       
       const newItems = items.map(item => {
         if (item.esProximo && item.tiempo > 0) {
-            // Calcula la fecha de finalización en milisegundos
             item.readyAt = Date.now() + (item.tiempo * 60 * 1000);
-            // Elimina el campo "tiempo" para no almacenarlo
             delete item.tiempo;
         } else {
-            // Si no es próximo o no tiene tiempo, elimina los campos
             delete item.esProximo;
             delete item.tiempo;
         }
@@ -47,7 +44,11 @@ module.exports = async (req, res) => {
   } 
   
   else if (req.method === 'DELETE') {
-    // Lógica para borrar el menú
+    // Esta parte ahora requiere la clave secreta.
+    if (req.query.secret !== process.env.CRON_SECRET) {
+      return res.status(403).send({ success: false, message: "Acceso denegado. Clave secreta incorrecta." });
+    }
+    
     try {
       await db.collection("menus").doc("menuHoy").delete();
       
