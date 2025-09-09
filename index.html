@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Administrador de Menú UTP CRPO</title>
+  <title>Administrador de Menú UTP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -33,7 +33,7 @@
 <body class="font-roboto bg-gray-100 text-gray-800" onunload="detachListener()">
   <header class="header-bg text-white py-4 text-center flex items-center justify-center shadow-md mb-8">
     <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
-    <h2 class="text-2xl font-bold">Administrador de Menú UTP CRPO</h2>
+    <h2 class="text-2xl font-bold">Administrador de Menú UTP</h2>
   </header>
 
   <div id="mainContent" class="hidden px-5 max-w-4xl mx-auto">
@@ -90,7 +90,7 @@
         const password = prompt("Por favor, ingrese la contraseña para acceder al administrador:");
         
         if (password === null) {
-          window.location.href = "https://menu-utp-crpo.vercel.app/";
+          window.location.href = "https://menu-utp.vercel.app/";
           return;
         }
 
@@ -116,7 +116,7 @@
         }
       }
 
-      window.location.href = "https://menu-utp-crpo.vercel.app/";
+      window.location.href = "https://menu-utp.vercel.app/";
     }
     
     function capitalizeDescription(input) {
@@ -135,7 +135,6 @@
       }
     }
 
-    // Nueva función para mostrar/ocultar el campo de tiempo
     function toggleProximo(checkbox) {
         const tiempoInput = checkbox.closest('td').querySelector('.tiempo-input');
         if (checkbox.checked) {
@@ -146,7 +145,6 @@
         }
     }
     
-    // Ahora agregamos la lógica para llamar a la nueva función
     function agregarFila(descripcion = "", precio = "", tiempo = "", esProximo = false) {
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -177,7 +175,6 @@
         const descripcion = r.cells[0].querySelector("input").value;
         let precio = r.cells[1].querySelector("input").value;
         
-        // Obtiene los nuevos campos de tiempo y estado
         const tiempo = r.cells[2].querySelector(".tiempo-input").value;
         const esProximo = r.cells[2].querySelector(".proximo-checkbox").checked;
 
@@ -212,8 +209,14 @@
       }
     }
 
+    // Esta es la función modificada para borrar sin preguntar.
     async function borrarMenu() {
-      const response = await fetch("./api/menu", { method: "DELETE" });
+      // Obtenemos la clave de la variable de entorno de Vercel (la misma que usas en el cron job)
+      const secret = await fetch('./api/get-secret?name=CRON_SECRET').then(res => res.text());
+      
+      const response = await fetch(`./api/menu?secret=${secret}`, {
+        method: "DELETE"
+      });
 
       const data = await response.json();
       if (data.success) {
@@ -229,7 +232,6 @@
         if (docSnapshot.exists && docSnapshot.data().items) {
           tbody.innerHTML = "";
           docSnapshot.data().items.forEach(item => {
-            // Pasamos los nuevos campos a la función
             agregarFila(item.descripcion, item.precio, item.tiempo || Math.round((item.readyAt - Date.now()) / (1000 * 60)), item.esProximo);
           });
         }
@@ -248,7 +250,3 @@
   </script>
 </body>
 </html>
-
-
-
-
