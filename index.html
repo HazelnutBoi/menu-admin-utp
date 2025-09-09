@@ -209,13 +209,9 @@
       }
     }
 
-    // Esta es la función modificada para borrar sin preguntar.
     async function borrarMenu() {
-      // Obtenemos la clave de la variable de entorno de Vercel (la misma que usas en el cron job)
-      const secret = await fetch('./api/get-secret?name=CRON_SECRET').then(res => res.text());
-      
-      const response = await fetch(`./api/menu?secret=${secret}`, {
-        method: "DELETE"
+      const response = await fetch('./api/delete-menu', {
+        method: "POST"
       });
 
       const data = await response.json();
