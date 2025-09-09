@@ -37,17 +37,20 @@
   </header>
 
   <div id="mainContent" class="hidden px-5 max-w-4xl mx-auto">
-    <table id="tablaMenu" class="w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden">
-      <thead>
-        <tr>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Tiempo / Precarga</th>
-          <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="overflow-x-auto">
+        <table id="tablaMenu" class="w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden">
+        <thead>
+            <tr>
+            <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Descripción</th>
+            <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Precio</th>
+            <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Tiempo / Precarga</th>
+            <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-lg" style="background-color: var(--utp-purple);">Acción</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        </table>
+    </div>
+    
     <div class="acciones text-center mt-8">
       <button class="agregar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-cyan-600 text-white hover:bg-cyan-700 transform hover:-translate-y-0.5" onclick="agregarFila()">➕ Agregar Plato</button>
       <button class="guardar px-6 py-3 m-2 rounded-md cursor-pointer text-lg font-bold transition duration-300 ease-in-out shadow-md bg-purple-700 text-white hover:bg-purple-800 transform hover:-translate-y-0.5" onclick="guardar()">💾 Guardar Menú</button>
