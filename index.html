@@ -1,230 +1,154 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Menú UTP CRPO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --utp-purple: #6a0dad;
-      }
-      .header-bg {
-        background: var(--utp-purple);
-      }
-      .hidden {
-        display: none;
-      }
-    </style>
+  <meta charset="UTF-8">
+  <title>Administrador de Menú UTP CRPO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --utp-purple: #6a0dad; }
+    .header-bg { background: var(--utp-purple); }
+    .eliminar-fila { background: #ffc107; color: black; border-radius: 50%; padding: 5px 10px; font-weight: bold; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body class="font-roboto bg-gray-100 text-gray-800" onunload="detachListener()">
-    <header class="header-bg text-white py-4 text-center flex flex-col items-center justify-center shadow-md mb-8">
-      <div class="flex items-center justify-center">
-        <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
-        <h2 class="text-2xl font-bold">Menú UTP CRPO</h2>
-      </div>
-      <h3 id="fechaHoy" class="text-white text-md mt-2"></h3>
-    </header>
+  <header class="header-bg text-white py-4 text-center flex items-center justify-center shadow-md mb-8">
+    <img src="logo_utp.png" alt="Logo UTP" class="h-12 mr-4">
+    <h2 class="text-2xl font-bold">Administrador de Menú UTP CRPO</h2>
+  </header>
 
-    <div class="px-2 md:px-5 max-w-5xl mx-auto overflow-x-auto">
-      <div id="loading" class="text-center text-xl text-gray-500">
-        Cargando menú...
-      </div>
-      
-      <table id="menuTable" class="hidden w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden min-w-[600px]">
-          <thead>
-              <tr>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">Descripción</th>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">P. Estudiantil</th>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">P. Administrativo</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
-      
-      <h3 id="upcomingHeader" class="text-2xl font-bold text-gray-800 mt-8 mb-2 hidden">Próximamente</h3>
-      
-      <table id="upcomingMenuTable" class="hidden w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden min-w-[600px]">
-          <thead>
-              <tr>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">Descripción</th>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">P. Estudiantil</th>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">P. Administrativo</th>
-                  <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm md:text-lg" style="background-color: var(--utp-purple);">Tiempo Restante</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
+  <div id="mainContent" class="hidden px-5 max-w-5xl mx-auto">
+    <div class="overflow-x-auto">
+        <table id="tablaMenu" class="w-full border-collapse my-5 shadow-lg bg-white rounded-lg overflow-hidden">
+        <thead>
+            <tr>
+                <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm" style="background-color: var(--utp-purple);">Descripción</th>
+                <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm" style="background-color: var(--utp-purple);">P. Estudiantil</th>
+                <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm" style="background-color: var(--utp-purple);">P. Administrativo</th>
+                <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm" style="background-color: var(--utp-purple);">Tiempo / Precarga</th>
+                <th class="p-4 border border-gray-200 text-left text-white uppercase font-bold text-sm" style="background-color: var(--utp-purple);">Acción</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+        </table>
     </div>
-
-    <div class="text-center mt-8 mb-8">
-      <a href="https://forms.office.com/r/4VTptYVr4k?origin=lprLink" target="_blank" class="text-lg font-bold text-gray-600 hover:text-utp-purple transition-colors duration-300">
-        ¿Tienes alguna sugerencia? ¡Escríbenos!
-      </a>
+    
+    <div class="acciones text-center mt-8">
+      <button class="agregar px-6 py-3 m-2 rounded-md font-bold bg-cyan-600 text-white hover:bg-cyan-700" onclick="agregarFila()">➕ Agregar Plato</button>
+      <button class="guardar px-6 py-3 m-2 rounded-md font-bold bg-purple-700 text-white hover:bg-purple-800" onclick="guardar()">💾 Guardar Menú</button>
+      <button class="borrar px-6 py-3 m-2 rounded-md font-bold bg-red-600 text-white hover:bg-red-700" onclick="borrarMenu()">🗑 Borrar Menú</button>
     </div>
+  </div>
 
-    <footer class="text-center text-xs text-gray-400 mt-4 mb-2">
-      <p>&copy; <span id="year"></span> Derechos Reservados. Anthony Torres.</p>
-    </footer>
+  <footer class="text-center text-xs text-gray-400 mt-4 mb-2">
+    <p>&copy; <span id="year"></span> Derechos Reservados. Anthony Torres.</p>
+  </footer>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-    <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    let db, menuRef, listener;
+    const tbody = document.querySelector("#tablaMenu tbody");
 
-        const menuTableBody = document.querySelector("#menuTable tbody");
-        const upcomingMenuTableBody = document.querySelector("#upcomingMenuTable tbody");
-        const loadingMessage = document.getElementById("loading");
-        const menuTable = document.getElementById("menuTable");
-        const upcomingMenuTable = document.getElementById("upcomingMenuTable");
-        const upcomingHeader = document.getElementById("upcomingHeader");
-        const fechaHoyElement = document.getElementById("fechaHoy");
-        let db;
-        let listener;
-        let countdownInterval;
+    async function initializeFirebase() {
+        const response = await fetch('/api/firebase-config');
+        const firebaseConfig = await response.json();
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        menuRef = db.collection("menus").doc("menuHoy");
+        authenticate();
+    }
 
-        function displayCurrentDate() {
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const today = new Date().toLocaleDateString('es-ES', options);
-            fechaHoyElement.textContent = `Hoy, ${today}`;
-        }
-        
-        async function initializeFirebase() {
-            try {
-                const response = await fetch('/api/firebase-config');
-                const firebaseConfig = await response.json();
-                
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.firestore();
-                
-                displayCurrentDate();
-                loadMenu();
-                
-                try {
-                    fetch("/api/track-view", { method: "POST" });
-                } catch (error) {
-                    console.error("Error al registrar la visita");
-                }
-            } catch (error) {
-                console.error("Error al obtener la configuración de Firebase:", error);
-                loadingMessage.textContent = "Error al cargar el menú.";
-            }
-        }
-        
-        function formatRemainingTime(milliseconds) {
-            const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
-            const minutes = Math.floor(totalSeconds / 60);
-            const seconds = totalSeconds % 60;
-            return `${minutes} min ${seconds} s`;
-        }
-        
-        function updateUpcomingTimers() {
-            const rows = upcomingMenuTableBody.querySelectorAll("tr");
-            rows.forEach(row => {
-                const endTime = parseInt(row.dataset.endtime);
-                const remaining = endTime - Date.now();
-                const timeCell = row.querySelector(".time-cell");
+    async function authenticate() {
+      const password = prompt("Ingrese la contraseña:");
+      if (!password) { window.location.href = "https://menu-utp-crpo.vercel.app/"; return; }
+      const response = await fetch("./api/auth", {
+        method: "POST",
+        body: JSON.stringify({ password }),
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await response.json();
+      if (data.success) {
+        document.getElementById('mainContent').classList.remove('hidden');
+        loadMenu();
+      } else {
+        alert("Incorrecto");
+        authenticate();
+      }
+    }
+    
+    function toggleProximo(checkbox) {
+        const tiempoInput = checkbox.closest('td').querySelector('.tiempo-input');
+        checkbox.checked ? tiempoInput.classList.remove('hidden') : tiempoInput.classList.add('hidden');
+    }
+    
+    function agregarFila(desc = "", pEst = "", pAdm = "", tiempo = "", esProximo = false) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="p-4 border border-gray-200"><input type="text" value="${desc}" class="w-full p-2 border rounded-md" onchange="capitalizeDescription(this)"></td>
+        <td class="p-4 border border-gray-200"><input type="number" step="0.01" value="${pEst}" placeholder="0.00" class="w-full p-2 border rounded-md"></td>
+        <td class="p-4 border border-gray-200"><input type="number" step="0.01" value="${pAdm}" placeholder="0.00" class="w-full p-2 border rounded-md"></td>
+        <td class="p-4 border border-gray-200 text-center flex flex-col items-center">
+            <input type="number" value="${tiempo}" class="tiempo-input w-24 p-2 border rounded-md ${esProximo ? '' : 'hidden'}">
+            <div class="mt-2 text-sm font-bold"><input type="checkbox" ${esProximo ? 'checked' : ''} class="proximo-checkbox" onchange="toggleProximo(this)"> Próximo</div>
+        </td>
+        <td class="p-4 border border-gray-200 text-center"><button class="eliminar-fila" onclick="this.parentElement.parentElement.remove()">❌</button></td>
+      `;
+      tbody.appendChild(row);
+    }
 
-                if (remaining > 0) {
-                    timeCell.innerHTML = `<div class="font-bold text-orange-600">${formatRemainingTime(remaining)}</div>`;
-                } else {
-                    timeCell.innerHTML = `<div class="font-bold text-green-600">¡Listo!</div>`;
-                }
+    async function guardar() {
+      const items = [];
+      tbody.querySelectorAll("tr").forEach(r => {
+        const descripcion = r.cells[0].querySelector("input").value;
+        const precioEst = r.cells[1].querySelector("input").value;
+        const precioAdm = r.cells[2].querySelector("input").value;
+        const tiempo = r.cells[3].querySelector(".tiempo-input").value;
+        const esProximo = r.cells[3].querySelector(".proximo-checkbox").checked;
+
+        if (descripcion && precioEst && precioAdm) {
+            items.push({ 
+                descripcion, 
+                precioEst: parseFloat(precioEst).toFixed(2),
+                precioAdm: parseFloat(precioAdm).toFixed(2),
+                tiempo: parseInt(tiempo) || 0, 
+                esProximo 
             });
         }
-        
-        function renderMenu(items, tableBody) {
-          tableBody.innerHTML = "";
-          if (items && items.length > 0) {
-            items.forEach(item => {
-                const row = document.createElement("tr");
-                
-                // Compatibilidad hacia atrás: si no existe precioEst, usa el precio viejo
-                const pEst = parseFloat(item.precioEst || item.precio || 0).toFixed(2);
-                const pAdm = parseFloat(item.precioAdm || 0).toFixed(2);
+      });
 
-                if (item.esProximo) {
-                    row.dataset.endtime = item.readyAt;
-                    row.innerHTML = `
-                        <td class="p-4 border border-gray-200 text-base md:text-lg">${item.descripcion}</td>
-                        <td class="p-4 border border-gray-200 text-base md:text-lg font-bold text-green-700">B/. ${pEst}</td>
-                        <td class="p-4 border border-gray-200 text-base md:text-lg font-bold text-blue-700">B/. ${pAdm}</td>
-                        <td class="p-4 border border-gray-200 text-base md:text-lg time-cell text-center">Cargando...</td>
-                    `;
-                } else {
-                    row.innerHTML = `
-                        <td class="p-4 border border-gray-200 text-base md:text-lg">${item.descripcion}</td>
-                        <td class="p-4 border border-gray-200 text-base md:text-lg font-bold text-green-700">B/. ${pEst}</td>
-                        <td class="p-4 border border-gray-200 text-base md:text-lg font-bold text-blue-700">B/. ${pAdm}</td>
-                    `;
-                }
-                tableBody.appendChild(row);
-            });
-          } else {
-             tableBody.innerHTML = "";
-          }
-        }
-        
-        function loadMenu() {
-            const menuRef = db.collection("menus").doc("menuHoy");
-            listener = menuRef.onSnapshot((docSnapshot) => {
-                if (docSnapshot.exists) {
-                    const allItems = docSnapshot.data().items || [];
-                    
-                    const readyItems = allItems.filter(item => !item.esProximo);
-                    const upcomingItems = allItems.filter(item => item.esProximo);
-                    
-                    renderMenu(readyItems, menuTableBody);
-                    renderMenu(upcomingItems, upcomingMenuTableBody);
-                    
-                    if (countdownInterval) {
-                      clearInterval(countdownInterval);
-                    }
-                    if (upcomingItems.length > 0) {
-                      updateUpcomingTimers();
-                      countdownInterval = setInterval(updateUpcomingTimers, 1000);
-                    } else {
-                      clearInterval(countdownInterval);
-                    }
+      const hoy = new Date();
+      const fecha = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+      
+      const response = await fetch("./api/menu", {
+        method: "POST",
+        body: JSON.stringify({ fecha, items }),
+        headers: { "Content-Type": "application/json" }
+      });
+      if ((await response.json()).success) alert("✅ Guardado");
+    }
 
-                    if (readyItems.length > 0) {
-                      menuTable.classList.remove("hidden");
-                    } else {
-                      menuTable.classList.add("hidden");
-                    }
-                    if (upcomingItems.length > 0) {
-                      upcomingMenuTable.classList.remove("hidden");
-                      upcomingHeader.classList.remove("hidden");
-                    } else {
-                      upcomingMenuTable.classList.add("hidden");
-                      upcomingHeader.classList.add("hidden");
-                    }
-                    
-                    loadingMessage.classList.add("hidden");
-                } else {
-                    renderMenu([], menuTableBody);
-                    renderMenu([], upcomingMenuTableBody);
-                    loadingMessage.textContent = "El menú de hoy no está disponible.";
-                    loadingMessage.classList.remove("hidden");
+    function loadMenu() {
+      listener = menuRef.onSnapshot(doc => {
+        if (doc.exists && doc.data().items) {
+          tbody.innerHTML = "";
+          doc.data().items.forEach(item => {
+            agregarFila(item.descripcion, item.precioEst || item.precio, item.precioAdm || "", item.tiempo || Math.round((item.readyAt - Date.now()) / (1000 * 60)), item.esProximo);
+          });
+        }
+      });
+    }
 
-                    menuTable.classList.add("hidden");
-                    upcomingMenuTable.classList.add("hidden");
-                    upcomingHeader.classList.add("hidden");
-                }
-            });
-        }
-        
-        function detachListener() {
-          if (listener) {
-            listener();
-          }
-        }
-        
-        initializeFirebase();
-    </script>
+    function capitalizeDescription(input) {
+      let v = input.value.trim().toLowerCase();
+      if (v) input.value = v.charAt(0).toUpperCase() + v.slice(1);
+    }
+
+    initializeFirebase();
+  </script>
 </body>
 </html>
